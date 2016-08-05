@@ -1,0 +1,192 @@
+body {
+	font-family: Helvetica Neue, Helvetica, Arimo, Liberation Sans, Lucida Grande, sans-serif;
+	font-size: 25px;
+	background: #f6efe5;
+}
+* {
+	/*vorder: red 1px solid;*/
+}
+
+header {
+	position: relative;
+	float: left;
+	height: 95vh;
+	display: table-cell;
+	width: 75px;
+	background: #0d2c40 url(../images/Wikipedia-logo-v2-en.svg)  no-repeat center bottom;
+	background-size: 100%;
+	margin-left: 20px;
+}
+
+#header-text {
+	font-family: 'EB Garamond', serif;
+	font-size:35px;
+	position:fixed;
+	color: white;
+	transform: rotate(-90deg);
+	left:-110px;
+	top: 200px;
+}
+
+#content-area {
+	display: table-cell;
+	padding: 2em;
+}
+
+.question {
+	margin-bottom: 30px;
+}
+	
+.question-number, .question-text {
+	font-family: Times, Georgia, Linux Libertine, Cambria, serif;
+	font-size: 1.5em;
+}
+
+.question-number {
+  	text-align: center;
+  	margin-right: 10px;
+  	border: 0.1em solid  #0d2c40;
+  	background-color: #c879b2;
+  	color: white;
+}
+
+.question-text {
+	border-bottom: 1px black solid;
+}
+
+#correction-area {
+	background-color: rgba(0, 188, 217, 0.8);
+	position:fixed;
+	margin-left: -150px;
+	z-index:-1;
+	width: 80%;
+	max-width: 750px;
+	min-height: 2em; 
+	vertical-align: middle;
+}
+
+#correction-text {
+	margin-left: 175px;
+	position: relative;
+	vertical-align: middle;
+	position: relative;
+}
+
+#button-area {
+	padding: 10px;
+	margin-bottom:30px;
+}
+
+#formbutton {
+	float: right;
+}
+
+#answer-list {
+	border: none;
+	padding-left:1em;
+}
+
+legend {
+	opacity: 0.2;
+	font-size: 0.8em;
+}
+	
+[type="radio"] {
+  border: 0; 
+  clip: rect(0 0 0 0); 
+  height: 1px; margin: -1px; 
+  overflow: hidden; 
+  padding: 0; 
+  position: absolute; 
+  width: 1px;
+}
+
+/* One radio button per line */
+label {
+  display: block;
+  cursor: pointer;
+  line-height: 1.5;
+  font-size: 1em;
+}
+
+[type="radio"] + span {
+  display: block;
+}
+
+/* the basic, unchecked style */
+[type="radio"] + span:before {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.25em;
+  border-radius: 1em;
+  border: 0.125em solid #0d2c40;
+  margin-right: 0.75em;
+  transition: 0.5s ease all;
+}
+
+/* the checked style using the :checked pseudo class */
+[type="radio"]:checked + span:before {
+  background: #f15a30;
+}
+
+/* never forget focus styling */
+[type="radio"]:focus + span:after {
+  content: '';
+}
+
+[type="radio"]:hover:not(:checked) + span:before {
+  content: '';
+  background: rgba(241,90,48,0.5);
+}
+
+/* buttons */
+.button-style {
+	font-family: Helvetica Neue, Helvetica, Arimo, Liberation Sans, Lucida Grande, sans-serif;
+  	border-radius: 20px;
+  	color: #ffffff;
+  	font-size: 15px;
+  	padding: 5px 20px 5px 20px;
+  	text-decoration: none;
+  	border: 0px;  
+}
+
+.button-style:focus {
+	 outline: none;
+}
+
+.action-button {
+  	background: rgba(200, 121, 178, 0.9);
+	font-family: 'Cabin', sans-serif;
+}
+
+.action-button:hover, .action-button:focus {
+  	background: rgba(200, 121, 178, 1);
+}
+
+.action-button:disabled {
+  	background:rgba(200, 121, 178, 0.2);;
+  	color: #edf8f3;
+}
+
+
+/* Introduction */
+.quizful-title {
+	float: top;
+}
+#introduction  {
+	position: relative;
+	padding:  1em 1em 1em 1em;
+	margin: auto;
+	border: green 1px solid;
+	display: table-cell;
+  	box-sizing: border-box;
+  	opacity:1.0;
+}
+
+footer {
+	text-align: center;
+  	clear:both;
+  	float:none;
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Quizful</title>
+	<link rel="stylesheet" href="css/style2.css">
+	<link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
+<!-- font-family: 'Sanchez', serif; -->
+</head>
+<body>
+<header>
+	<div id="header-text">
+		Quizful - Wikipedia Quiz 
+	</div>
+</header>
+<div id="content-area">
+	<form action="" method="GET" name="quiz" id="quiz">
+		<div class="question-area">
+			<div class="question">
+			<span class="question-number"> 1 </span> <span class="question-text"> Select a quiz type </span> 
+			</div>
+			<fieldset id="answer-list">
+			<legend>Possible answers</legend>
+				<label for="accessible">
+				<input type="radio" value="accessible" name="quality" id="accessible" accesskey="a" >
+				<span>a. Easy</span></label>
+				<label for="pretty">
+				<input type="radio" value="pretty" name="quality" id="pretty" accesskey="b" >
+				<span>b. Hard</span></label>
+				<label for="accessible-and-pretty">
+				<input type="radio" value="pretty" name="quality" id="accessible-and-pretty" accesskey="c">
+				<span>c. It doesn't matter</span></label>
+			</fieldset>
+		</div>
+		<div id="button-area">
+		<button name="Am I right?" type="submit" value="checkme" id="formbutton" class="action-button button-style" aria-live="assertive" aria-atomic="true" aria-relevant="text" disabled>
+			Am I right?
+		</button>
+		</div>		
+		<div id="correction-area">
+			<div id="correction-text" aria-live="assertive" aria-atomic="true" aria-relevant="additions removals text">
+				
+			</div>
+		</div>
+
+	</form>
+</div>
+<div id="introduction" hidden style="display:none">
+	<h2>
+		<div class="quizful-title">
+			Welcome to Quizful 
+		</div>
+	</h2>
+	<div class="intro-text">
+		<p>
+			We are committed to bringing about an expansion in human knowledge through effective quizmaking. Using a patent-considered (and rejected) A.e.I. (alcohol enhanced intelligence), we can create an interesting and mindful quiz from any (most...some) Wikipedia article. We are currently focused on longer articles where are system has a better chance of parsing the human language and intents to expose the underlying questions present in every article. 
+		</p>
+		<p>
+			Based on 40+ years of analog human learning, our system performs these analyses with significantly improved outcomes over traditional machine learning techniques. The underlying actual neural network combines eons of architecture performance improvement (or divine inspiration depending on your world view) with modern visual acuity improvements (glasses). We use modern software engineering practices for quiz presentation and we strive to provide a small amount of joy for the quiz-taker. 
+		</p>
+	</div>
+	<div class="quiz-list">
+		<ul>
+			<li>Is that the 60's?</li>
+		</ul>
+	</div>
+</div>
+<footer class="quizzful-footer">
+	Copyright &copy; 2016 Mark Williams 
+</footer>
+<script src="js/jquery-2.2.4.js">
+</script>
+<script src="js/app.js">
+</script>
+</body>
+</html>
