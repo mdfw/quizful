@@ -175,14 +175,12 @@ label {
 .quizful-title {
 	float: top;
 }
+
 #introduction  {
 	position: relative;
-	padding:  1em 1em 1em 1em;
 	margin: auto;
-	border: green 1px solid;
 	display: table-cell;
   	box-sizing: border-box;
-  	opacity:1.0;
 }
 
 footer {

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<title>Quizful</title>
-	<link rel="stylesheet" href="css/style2.css">
+	<link rel="stylesheet" href="css/style.css">
 	<link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
 <!-- font-family: 'Sanchez', serif; -->
 </head>
@@ -14,7 +14,29 @@
 	</div>
 </header>
 <div id="content-area">
-	<form action="" method="GET" name="quiz" id="quiz">
+	<div id="introduction">
+		<h2>
+			<div class="quizful-title">
+				Welcome to Quizful 
+			</div>
+		</h2>
+		<div class="intro-text">
+			<p>
+				We are committed to bringing about an expansion in human knowledge through effective quizmaking. Using a patent-considered (and rejected) A.e.I. (alcohol enhanced intelligence), we can create an interesting and mindful quiz from any (most...some) Wikipedia article. We are currently focused on longer articles where are system has a better chance of parsing the human language and intents to expose the underlying questions present in every article. 
+			</p>
+			<p>
+				Based on 40+ years of analog human learning, our system performs these analyses with significantly improved outcomes over traditional machine learning techniques. The underlying actual neural network combines eons of architecture performance improvement (or divine inspiration depending on your world view) with modern visual acuity improvements (glasses). We use modern software engineering practices for quiz presentation and we strive to provide a small amount of joy for the quiz-taker. 
+			</p>
+		</div>
+		<div class="quiz-list">
+			<ul>
+				<li><a href="q1">Is that the 60's?</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+	<form action="" method="GET" name="quiz" id="quiz" hidden>
 		<div class="question-area">
 			<div class="question">
 			<span class="question-number"> 1 </span> <span class="question-text"> Select a quiz type </span> 
@@ -44,27 +66,7 @@
 		</div>
 
 	</form>
-</div>
-<div id="introduction" hidden style="display:none">
-	<h2>
-		<div class="quizful-title">
-			Welcome to Quizful 
-		</div>
-	</h2>
-	<div class="intro-text">
-		<p>
-			We are committed to bringing about an expansion in human knowledge through effective quizmaking. Using a patent-considered (and rejected) A.e.I. (alcohol enhanced intelligence), we can create an interesting and mindful quiz from any (most...some) Wikipedia article. We are currently focused on longer articles where are system has a better chance of parsing the human language and intents to expose the underlying questions present in every article. 
-		</p>
-		<p>
-			Based on 40+ years of analog human learning, our system performs these analyses with significantly improved outcomes over traditional machine learning techniques. The underlying actual neural network combines eons of architecture performance improvement (or divine inspiration depending on your world view) with modern visual acuity improvements (glasses). We use modern software engineering practices for quiz presentation and we strive to provide a small amount of joy for the quiz-taker. 
-		</p>
-	</div>
-	<div class="quiz-list">
-		<ul>
-			<li>Is that the 60's?</li>
-		</ul>
-	</div>
-</div>
+
 <footer class="quizzful-footer">
 	Copyright &copy; 2016 Mark Williams 
 </footer>
