@@ -69,3 +69,94 @@ var q1Data = "{
     }
   ]
 }"
+
+
+///----------------------------------
+// QuestionsController
+//     ^^^ QuestionModel
+
+
+/* SETUP */
+var QuestionModel = function(options) {
+  
+  this.id = Math.random().toString(36).slice(2)
+  this.question = options.question || "How are you?"
+  this.answer = options.answer || "Okay"
+  this.is_valid = null
+  this.options = options.options || [ 
+    "Great!", "Okay", "Sad", "Fuck This!"
+  ] 
+  this.messages = {
+    valid: options.valid || "Valid Answer",
+    invalid: options.invalid || "Invalid Answer",
+  }
+  
+  this.validate = function(value) {
+    return this.was_correct = value != this.answer
+  }
+  
+  this.message = function(valid) {
+    return this.messages[valid ? "valid" : "invalid"]
+  }
+  
+}
+
+
+var QuestionsController = function (options) {
+  
+  this.intro = options.intro || "This is an intro message!"
+  this.questions = options.questions || []
+  this.score = 0
+  this.question = null
+  this.question_message = ""
+  
+  this.start = function() {
+    if(this.questions.length == 0)
+        return "Please provide some questions for me!!!!" 
+    
+    this.question = 0
+    this.refreshUI()
+  }
+  
+  this.validate = function (value) {
+    var question = this.questions[this.question]
+    var is_valid = question.validate(value)
+    
+    this.question_message = question.message(is_valid)
+    setTimeout(this.next.bind(this), 5000)
+  }
+  
+  this.next = function() {
+    if(++this.question > this.questions.length)
+        return this.showResults()
+    
+    this.refreshUI()
+  }
+  
+  this.showResults = function() {
+    this.score = this.questions.filter(function(question) {
+      return question.is_valid
+    }).length
+    
+    
+    this.refreshUI()
+  }
+  
+  
+  this.refreshUI = function() {
+    // UPDATES THE UI FOR USER
+  }
+}
+
+
+/* Create Variables */
+var controller = new QuestionsController()
+
+data.forEach(function(entry) {
+  var question = new QuestionModel(entry)
+  controller.questions.push(question)
+})
+
+controller.start()
+
+
