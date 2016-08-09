@@ -7,6 +7,7 @@ body {
 	/*vorder: red 1px solid;*/
 }
 
+
 header {
 	position: relative;
 	float: left;
@@ -156,17 +157,31 @@ label {
 	 outline: none;
 }
 
-.action-button {
+.check-button {
   	background: rgba(200, 121, 178, 0.9);
 	font-family: 'Cabin', sans-serif;
 }
 
-.action-button:hover, .action-button:focus {
+.check-button:hover, .check-button:focus {
   	background: rgba(200, 121, 178, 1);
 }
 
-.action-button:disabled {
-  	background:rgba(200, 121, 178, 0.2);;
+.check-button:disabled {
+  	background:rgba(200, 121, 178, 0.2);
+  	color: #edf8f3;
+}
+
+.forward-button {
+  	background: rgba(13, 44, 64, 0.9);
+	font-family: 'Cabin', sans-serif;
+}
+
+.forward-button:hover, .check-button:focus {
+  	background: rgba(13, 44, 64, 1);
+}
+
+.forward-button:disabled {
+  	background:rgba(13, 44, 64, 0.2);
   	color: #edf8f3;
 }
 
@@ -177,6 +192,9 @@ label {
 }
 
 #introduction  {
+}
+
+.introduction-area {
 	position: relative;
 	margin: auto;
 	display: table-cell;
@@ -187,4 +205,14 @@ footer {
 	text-align: center;
   	clear:both;
   	float:none;
+}
+
+.hidden {
+	visibility: hidden;
+	display: none;
+}
+
+.answer-prototype {
+	visibility: hidden;
+	display: none;
 }
