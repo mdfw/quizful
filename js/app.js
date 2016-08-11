@@ -104,7 +104,10 @@ var QuizModerator = function(options) {
 			return;
 		}
 		
-		this.current_q.validate(answer_id);
+		this.current_q().validate(answer_id);
+	}
+	
+	this.next_question = function() {
 		if (this.current_q.completed) {
 			this.q_index++;
 		}
@@ -126,6 +129,7 @@ var QuizModerator = function(options) {
 }
 
 var QuizController = function(options) {
+	console.log("Creating quizcontroller");
 	this.qmod = new QuizModerator(options);
 	
 	this.run = function() {
@@ -133,17 +137,17 @@ var QuizController = function(options) {
 	}	
 	
 	this.refreshUI = function() {
-		console.log("refreshing");
+		console.log("!Refreshing UI");
 		var q = this.qmod.current_q();
 		console.dir(this.qmod);
 		console.dir(q);
-		this.set_question_text();
-		this.set_answers();
-		this.set_button_state();
-		this.set_correction_area();
+		this.refresh_question_text();
+		this.refresh_answers();
+		this.refresh_button_state();
+		this.refresh_correction_area();
 	}
 	
-	this.set_question_text = function() {
+	this.refresh_question_text = function() {
 		var q = this.qmod.current_q();
 		var qnum = q.question_visual_id;
 		if (qnum) {
@@ -155,18 +159,27 @@ var QuizController = function(options) {
 		$(".question-text").text(q.question_text);
 	}
 	
-	this.set_answers = function() {
+	this.watch_answers_for_change = function() {
+		console.log("starting watch_answers_for_change.");
+		$("[type='radio']").off('change');
+		$("[type='radio']").on('change', function() {
+			console.log("Changed!");
+			/*this.set_button_state.call();*/ // This is not working because of some binding problem I cannot solve.
+			answer_set_changed();
+		})
+	}
+	
+	this.refresh_answers = function() {
+		console.log("Refreshing answers");
 		var q = this.qmod.current_q();
 		jQuery.each(q.answers, function(key, value) {
 			var ans = q.answers[key];
-			
 			var new_answer = $(".answer-prototype").clone();
-			console.dir(new_answer);
 			new_answer.find("label").attr('for', ans.numerator);
 			new_answer.find("span").html(ans.numerator + ". " + ans.text);
 			var radio = new_answer.find("input");
 			radio.attr('id', ans.numerator);
-			radio.val(ans.text);
+			radio.val(ans.id);
 			radio.attr('accesskey', ans.accesskey);
 			if (q.completed) {
 				radio.disabled
@@ -175,52 +188,76 @@ var QuizController = function(options) {
 				radio.prop('checked', true)
 			}
 			new_answer.removeClass("answer-prototype");
-			console.log("Finished");
-			console.dir(new_answer);
 			$("#answer-list").append(new_answer);
 		})
+		this.watch_answers_for_change();
+		console.log("Finished refreshing answers.");
 	}
 	
 	this.answer_selected = function() {
 		var answers = $("[type='radio']:checked");
-		console.log("answers length: " + answers.length);
-		console.dir(answers);
 		return answers.length > 0;
 	}
+	this.selected_answer_text = function() {
+		return $("[type='radio']:checked").first().next().text();
+	}
 	
-	this.set_button_state = function() {
+	this.refresh_button_state = function() {
 		var q = this.qmod.current_q();
 		var the_button = $("#formbutton");
 		this.answer_selected();
 		if (q.completed()) {
-			the_button.removeClass("check-button").addClass("forward-button");
-			the_button.text("Continue");
-			the_button.prop('disabled', false);
-		} else {
-			the_button.removeClass("forward-button").addClass("check-button");
-			the_button.text("Am I right?");
-
-			if (this.answer_selected()) {
+			if (!the_button.hasClass("forward-button")) {
+				the_button.removeClass("check-button").addClass("forward-button");
+				the_button.text("Continue");
+			}
+			if (the_button.prop('disabled')) {
 				the_button.prop('disabled', false);
-			} else {
+				the_button.attr('title', "Continue to the next question or to see your results.");
+				the_button.off("submit");
+				 the_button.submit(function( event ) {
+				 	event.preventDefault();
+  					next_question();
+				})
+			}
+		} else {
+			if (!the_button.hasClass("check-button")) {
+				the_button.removeClass("forward-button").addClass("check-button");
+				the_button.text("Am I right?");
+			}
+
+			if (this.answer_selected() && the_button.prop('disabled')) {
+				the_button.prop('disabled', false);
+				var button_title = "Check if your answer is correct.";
+				var answer_text = this.selected_answer_text();
+				if (answer_text) {
+					button_title = "Check if your answer '" + answer_text + "' is correct.";
+				}
+				the_button.attr('title', button_title);
+				the_button.off("submit");
+				$("#formbutton").submit(function( event ) {
+					console.log("Submitting, should be checking...");
+					event.preventDefault();
+  					check_answer(event);
+				})
+
+			} else if (!this.answer_selected() && !the_button.prop('disabled')) {
 				the_button.prop('disabled', true);
-				this.watch_answers_change();
+				the_button.attr('title', "Select an answer to check your work.");
 			}
 		}
 	}
 	
-	this.watch_answers_change = function() {
-		console.log("tracking hcanges");
-		$("[type='radio']").change(function() {
-			console.log("Changed!");
-			this.set_button_state();
-		})
-		
-	
-	}
-	this.set_correction_area = function() {
+
+	this.refresh_correction_area = function() {
 		var q = this.qmod.current_q();
 		$("#correction-text").html(q.message());
+	}
+	
+	this.verify_answer = function() {
+		var ans_value = $("[type='radio']:checked").first().val();
+		this.qmod.check_answer(ans_value);
+		this.refreshUI();
 	}
 }
 
@@ -231,7 +268,7 @@ var quiz_controller;
 
 $(document).ready(function() {
 	$("#quiz1link").click(function(event) {
-	event.preventDefault();
+		event.preventDefault();
 	  	loadQuestion1();
 	})
 	loadQuestion1();
@@ -261,3 +298,19 @@ function loadQuestion(qdata) {
 	return qc;
 }
 
+/* These are a hack because I couldn't figure out how to get back to my controller */
+function answer_set_changed() {
+	quiz_controller.refresh_button_state();
+}
+
+function check_answer(event) {
+	event.preventDefault();
+	console.log("check answer");
+	quiz_controller.verify_answer();
+	console.log("end check answer");
+	return false;
+}
+
+function next_question(event) {
+	
+}

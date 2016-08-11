@@ -176,7 +176,7 @@ label {
 	font-family: 'Cabin', sans-serif;
 }
 
-.forward-button:hover, .check-button:focus {
+.forward-button:hover, .forward-button:focus {
   	background: rgba(13, 44, 64, 1);
 }
 
