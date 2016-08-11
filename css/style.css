@@ -71,6 +71,7 @@ header {
 	position: relative;
 	vertical-align: middle;
 	position: relative;
+	padding: 0.5em;
 }
 
 #button-area {
@@ -137,7 +138,7 @@ label {
   content: '';
 }
 
-[type="radio"]:hover:not(:checked) + span:before {
+[type="radio"]:hover:not(:checked):not(:disabled) + span:before {
   content: '';
   background: rgba(241,90,48,0.5);
 }

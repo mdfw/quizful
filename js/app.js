@@ -59,10 +59,10 @@ var QuestionModel = function(options) {
 	}
   
 	this.message = function() {
-		if (!this.completed) {
-			return messages[no_answer];
+		if (!this.completed()) {
+			return this.messages["no_answer"];
 		} else {
-			return this.messages[this.valid ? "valid" : "invalid"];
+			return this.messages[this.is_correct ? "correct" : "incorrect"];
 		}
 	}
   
@@ -172,6 +172,7 @@ var QuizController = function(options) {
 	this.refresh_answers = function() {
 		console.log("Refreshing answers");
 		var q = this.qmod.current_q();
+		$("#answer-list").find(".answer").remove();
 		jQuery.each(q.answers, function(key, value) {
 			var ans = q.answers[key];
 			var new_answer = $(".answer-prototype").clone();
@@ -181,8 +182,8 @@ var QuizController = function(options) {
 			radio.attr('id', ans.numerator);
 			radio.val(ans.id);
 			radio.attr('accesskey', ans.accesskey);
-			if (q.completed) {
-				radio.disabled
+			if (q.completed()) {
+				radio.prop('disabled', true)
 			}
 			if (ans.id === q.guessed_id) {
 				radio.prop('checked', true)
@@ -210,15 +211,17 @@ var QuizController = function(options) {
 			if (!the_button.hasClass("forward-button")) {
 				the_button.removeClass("check-button").addClass("forward-button");
 				the_button.text("Continue");
-			}
-			if (the_button.prop('disabled')) {
-				the_button.prop('disabled', false);
 				the_button.attr('title', "Continue to the next question or to see your results.");
-				the_button.off("submit");
-				 the_button.submit(function( event ) {
+				$("#quiz").off("submit");
+				console.log("Setting form to continue");
+				 $("#quiz").submit(function( event ) {
+				 	console.log("continue");
 				 	event.preventDefault();
   					next_question();
 				})
+			}
+			if (the_button.prop('disabled')) {
+				the_button.prop('disabled', false);
 			}
 		} else {
 			if (!the_button.hasClass("check-button")) {
@@ -234,8 +237,8 @@ var QuizController = function(options) {
 					button_title = "Check if your answer '" + answer_text + "' is correct.";
 				}
 				the_button.attr('title', button_title);
-				the_button.off("submit");
-				$("#formbutton").submit(function( event ) {
+				$("#quiz").off("submit");
+				$("#quiz").submit(function( event ) {
 					console.log("Submitting, should be checking...");
 					event.preventDefault();
   					check_answer(event);
@@ -251,6 +254,8 @@ var QuizController = function(options) {
 
 	this.refresh_correction_area = function() {
 		var q = this.qmod.current_q();
+		var msg = q.message();
+		
 		$("#correction-text").html(q.message());
 	}
 	
@@ -258,6 +263,13 @@ var QuizController = function(options) {
 		var ans_value = $("[type='radio']:checked").first().val();
 		this.qmod.check_answer(ans_value);
 		this.refreshUI();
+	}
+	
+	this.continue_quiz = function() {
+		if (this.qmod.current_q().completed()) {
+			this.qmod.next_question();
+			this.refreshUI();
+		}
 	}
 }
 
@@ -312,5 +324,5 @@ function check_answer(event) {
 }
 
 function next_question(event) {
-	
+	quiz_controller.continue_quiz();
 }
