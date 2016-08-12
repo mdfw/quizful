@@ -1,7 +1,17 @@
 // Original JavaScript code by Chirp Internet: www.chirp.com.au
 // Please acknowledge use of this code by including this header.
+function start_fireworks() {
+	console.log("starting fireworks");
+	fireworks();
+}
 
-document.addEventListener("DOMContentLoaded", function() {
+function end_fireworks () {
+	console.log("ending fireworks");
+	$(".launcher").remove();
+}
+
+
+function fireworks() {
   var num_launchers = 12;
   var num_flares = 20;
   var flare_colours = ['red', 'aqua', 'violet', 'yellow', 'lightgreen', 'white', 'blue'];
@@ -76,6 +86,6 @@ document.addEventListener("DOMContentLoaded", function() {
     for(var j=0; j < num_flares; j++) {
       newdiv.appendChild(document.createElement("div"));
     }
-    document.getElementById("stage").appendChild(newdiv);
+    document.getElementById("content-area").appendChild(newdiv);
   }
-}, false);
+}

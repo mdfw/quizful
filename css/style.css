@@ -38,7 +38,12 @@ header {
 	margin-bottom: 30px;
 }
 	
-.question-number, .question-text {
+.question-number, .question-text  {
+	font-family: Times, Georgia, Linux Libertine, Cambria, serif;
+	font-size: 1.5em;
+}
+
+#completed-quiz-title {
 	font-family: Times, Georgia, Linux Libertine, Cambria, serif;
 	font-size: 1.5em;
 }
@@ -49,6 +54,7 @@ header {
   	border: 0.1em solid  #0d2c40;
   	background-color: #c879b2;
   	color: white;
+  	padding: 0.2em;
 }
 
 .question-text {
@@ -64,6 +70,17 @@ header {
 	max-width: 750px;
 	min-height: 2em; 
 	vertical-align: middle;
+}
+
+ #completed-quiz-text {
+	background-color: rgba(0, 188, 217, 0.8);
+	position:relative;
+	width: 80%;
+	max-width: 750px;
+	min-height: 2em; 
+	vertical-align: middle;
+	padding: 1em;
+	margin-top: 2em;
 }
 
 #correction-text {
@@ -110,7 +127,10 @@ label {
   line-height: 1.5;
   font-size: 1em;
 }
-
+.ans_correction_text {
+	font-size: 0.75em;
+	color: #f15a30;
+}
 [type="radio"] + span {
   display: block;
 }
@@ -216,4 +236,120 @@ footer {
 .answer-prototype {
 	visibility: hidden;
 	display: none;
+}
+
+
+/* Fireworks */
+
+@-webkit-keyframes explosion {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  33% {
+    width: 0;
+    opacity: 0;
+  }
+  34% {
+    width: 10px;
+    opacity: 1.0;
+  }
+  40% {
+    width: 80px;
+    opacity: 1.0;
+  }
+  to {
+    width: 90px;
+    opacity: 0;
+  }
+}
+
+@-moz-keyframes explosion {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  33% {
+    width: 0;
+    opacity: 0;
+  }
+  34% {
+    width: 10px;
+    opacity: 1.0;
+  }
+  40% {
+    width: 80px;
+    opacity: 1.0;
+  }
+  to {
+    width: 90px;
+    opacity: 0;
+  }
+}
+
+.fireworks-background-set {
+  animation: set-stage 500ms;
+  animation-fill-mode: forwards;
+}
+
+.fireworks-background-remove {
+  animation: remove-stage 1s;
+  animation-fill-mode: forwards;
+
+}
+
+@keyframes set-stage {
+  0% {
+    background-color: #f6efe5;
+  }
+  100% {
+    background-color: #0d2c40;
+  }
+}
+
+@keyframes remove-stage {
+  0% {
+    background-color: #0d2c40;
+  }
+  100% {
+    background-color: #f6efe5;
+  }
+}
+
+.fireworks-text {
+	color: white;
+}
+
+.fireworks-stage {
+  	position: relative;
+  	height: 400px;
+}
+
+.launcher {
+  position: absolute;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-duration: 4s;
+  -moz-animation-iteration-count: infinite;
+  background: red;
+  border-bottom: 3px solid yellow;
+}
+
+.launcher div {
+  position: absolute;
+  opacity: 0;
+  -webkit-animation-name: explosion;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-name: explosion;
+  -moz-animation-duration: 4s;
+  -moz-animation-iteration-count: infinite;
+  left: 3px;
+  top: 3px;
+  width: 10px;
+  height: 4px;
+  border-right: 4px solid yellow;
+  border-radius: 2px;
+  -webkit-transform-origin: 0 0;
+  -moz-transform-origin: 0 0;
 }

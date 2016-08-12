@@ -46,12 +46,13 @@ var QuestionModel = function(options) {
 	this.messages = {
 		correct: markdown_to_html(options.messages.correct) || "Correct Answer",
 		incorrect: markdown_to_html(options.messages.incorrect) || "Incorrect Answer",
-		no_answer: markdown_to_html(options.messages.no_answer) || "Answer me!"
+		no_answer: markdown_to_html(options.messages.no_answer) || ""
 	}
   
 	this.validate = function(value) {
 		this.guessed_id = value;
-		return this.is_correct;
+		console.log("QuestionModel:: validate: " + value);
+		return this.is_correct();
 	}
   
 	this.is_correct = function() {
@@ -62,7 +63,7 @@ var QuestionModel = function(options) {
 		if (!this.completed()) {
 			return this.messages["no_answer"];
 		} else {
-			return this.messages[this.is_correct ? "correct" : "incorrect"];
+			return this.messages[this.is_correct() ? "correct" : "incorrect"];
 		}
 	}
   
@@ -82,7 +83,9 @@ var AnswerModel = function(options) {
 
 
 var QuizModerator = function(options) {
+	console.log("Creating quizmoderator");
 	this.introduction = markdown_to_html(options.introduction) || "Oops, we are missing an introduction";
+	this.final_text = markdown_to_html(options.final_text) || "Here should be some feedback.";
 	this.questions = parse_questions(options);
 	function parse_questions(options) {
 		var qs = [];
@@ -103,33 +106,31 @@ var QuizModerator = function(options) {
 		if (!answer_id) {
 			return;
 		}
-		
 		this.current_q().validate(answer_id);
 	}
 	
 	this.next_question = function() {
-		if (this.current_q.completed) {
+		if (this.current_q().completed()) {
 			this.q_index++;
 		}
 	}
 	
 	this.quiz_complete = function() {
-		return this.q_index > this.questions.length;
+		return this.q_index > this.questions.length-1;
 	}
 	
 	this.total_score = function() {
 		return this.questions.filter(function(question) {
-      		return question.is_correct;
+      		return question.is_correct();
     	}).length;
 	}
 	
 	this.total_questions = function() {
-		return this.questions.length;
+		return this.questions.length - 1;
 	}
 }
 
 var QuizController = function(options) {
-	console.log("Creating quizcontroller");
 	this.qmod = new QuizModerator(options);
 	
 	this.run = function() {
@@ -137,10 +138,15 @@ var QuizController = function(options) {
 	}	
 	
 	this.refreshUI = function() {
-		console.log("!Refreshing UI");
-		var q = this.qmod.current_q();
-		console.dir(this.qmod);
-		console.dir(q);
+		console.log("!Refreshing UI");	
+		if (this.qmod.quiz_complete()) {
+			this.show_final_score();
+			return;
+		} 
+		if ($("#quiz").hasClass('hidden')) {
+			$("#quiz").removeAttr('hidden');
+			$("#quiz").removeClass('hidden');
+		}
 		this.refresh_question_text();
 		this.refresh_answers();
 		this.refresh_button_state();
@@ -151,21 +157,19 @@ var QuizController = function(options) {
 		var q = this.qmod.current_q();
 		var qnum = q.question_visual_id;
 		if (qnum) {
-			$(".question-number").text(qnum);
+			$(".question-number").html(qnum);
 		} else {
 			$(".question-number").hide;
 		}
 		var qtext = q.question_text;
-		$(".question-text").text(q.question_text);
+		$(".question-text").html(q.question_text);
 	}
 	
 	this.watch_answers_for_change = function() {
-		console.log("starting watch_answers_for_change.");
+		var quiz_controller = this;
 		$("[type='radio']").off('change');
 		$("[type='radio']").on('change', function() {
-			console.log("Changed!");
-			/*this.set_button_state.call();*/ // This is not working because of some binding problem I cannot solve.
-			answer_set_changed();
+			quiz_controller.refresh_button_state();
 		})
 	}
 	
@@ -177,7 +181,11 @@ var QuizController = function(options) {
 			var ans = q.answers[key];
 			var new_answer = $(".answer-prototype").clone();
 			new_answer.find("label").attr('for', ans.numerator);
-			new_answer.find("span").html(ans.numerator + ". " + ans.text);
+			if (q.completed() && ans.id === q.guessed_id && ans.correction) {
+				new_answer.find("span").html(ans.numerator + ". " + ans.text + "  <span class='ans_correction_text'>" + ans.correction + "</span>");
+			} else {
+				new_answer.find("span").html(ans.numerator + ". " + ans.text);
+			}
 			var radio = new_answer.find("input");
 			radio.attr('id', ans.numerator);
 			radio.val(ans.id);
@@ -206,7 +214,8 @@ var QuizController = function(options) {
 	this.refresh_button_state = function() {
 		var q = this.qmod.current_q();
 		var the_button = $("#formbutton");
-		this.answer_selected();
+		var quiz_controller = this;
+		
 		if (q.completed()) {
 			if (!the_button.hasClass("forward-button")) {
 				the_button.removeClass("check-button").addClass("forward-button");
@@ -217,7 +226,7 @@ var QuizController = function(options) {
 				 $("#quiz").submit(function( event ) {
 				 	console.log("continue");
 				 	event.preventDefault();
-  					next_question();
+  					quiz_controller.continue_quiz();
 				})
 			}
 			if (the_button.prop('disabled')) {
@@ -241,7 +250,7 @@ var QuizController = function(options) {
 				$("#quiz").submit(function( event ) {
 					console.log("Submitting, should be checking...");
 					event.preventDefault();
-  					check_answer(event);
+  					quiz_controller.verify_answer(event);
 				})
 
 			} else if (!this.answer_selected() && !the_button.prop('disabled')) {
@@ -260,17 +269,77 @@ var QuizController = function(options) {
 	}
 	
 	this.verify_answer = function() {
+		event.preventDefault();	
 		var ans_value = $("[type='radio']:checked").first().val();
 		this.qmod.check_answer(ans_value);
 		this.refreshUI();
+	return false;
 	}
 	
 	this.continue_quiz = function() {
 		if (this.qmod.current_q().completed()) {
 			this.qmod.next_question();
 			this.refreshUI();
+		} else {
+			console.log("Current question is not complete!");
 		}
 	}
+	
+	this.show_final_score = function() {
+		$("#quiz").attr('hidden');
+		$("#quiz").addClass('hidden');
+		$("#completed-quiz").removeAttr('hidden');
+		$("#completed-quiz").removeClass('hidden');
+		var score_percentage = 0;
+		score_percentage = (this.qmod.total_score()/this.qmod.total_questions()) * 100;
+		var fire_fireworks = false;
+		var final_score_title = "Pretty good."
+		if (score_percentage > 90) {
+			final_score_title = "Amazing!";
+			fire_fireworks = true;
+		} else if (score_percentage > 70) {
+			final_score_title = "Really good!";
+			fire_fireworks = true;
+		} else if (score_percentage > 50) {
+			final_score_title = "Not bad. Do better next time to get fireworks!";
+		} else {
+			final_score_title = "Boy, that was terrible.  Do better next time to get the lovely fireworks!";
+		}
+		$("#completed-quiz-title").html(final_score_title);
+		var completed_quiz_text = "You answered " + this.qmod.total_score() + " correctly out of " + this.qmod.total_questions() + ". " + this.qmod.final_text;
+		$("#completed-quiz-text").html(completed_quiz_text);
+		if (fire_fireworks) {
+			this.show_fireworks();
+		}
+		
+	}
+	
+	this.show_fireworks = function() {
+		start_fireworks();
+		$("body").addClass("fireworks-background-set");
+		$("#completed-quiz-title").addClass("fireworks-text");
+		$("#completed-quiz-text").addClass("fireworks-text");
+		$("#completed-quiz").addClass('fireworks-stage');
+		var _this = this;
+		setTimeout(function() {
+			_this.stop_fireworks();
+		}, 5000);
+
+	}
+	
+	this.stop_fireworks = function() {
+		$("body").addClass("fireworks-background-remove");
+		$("#completed-quiz-title").removeClass("fireworks-text");
+		$("#completed-quiz-text").removeClass("fireworks-text");
+		$("#completed-quiz").removeClass('fireworks-stage');
+		end_fireworks();
+		setTimeout(function() {
+			$("body").removeClass("fireworks-background-set");
+			$("body").removeClass("fireworks-background-remove");
+		}, 1000);
+	}
+	
+
 }
 
 var q1Data = '{ "introduction": "This quiz is about the song _Is That All There Is?_", "final_text": "Read more on Wikipedia\x27s entry on [Is that all there is?](https://en.wikipedia.org/wiki/Is_That_All_There_Is%3F)", "questions": [ { "id": "12", "question_visual_id": "1", "question_text": "Select a quiz type.", "answer_ids": [ "123" ], "answers": [ { "id": "121", "numerator": "a", "accesskey": "a", "text": "Hard quiz" }, { "id": "122", "numerator": "b", "accesskey": "b", "text": "Easy quiz" }, { "id": "123", "numerator": "c", "accesskey": "c", "text": "It does not matter" } ], "messages": { "correct": "Correct. It does not matter because it is all the same quiz.", "incorrect": "No! It does not matter because it is all the same quiz." } }, { "id": "13", "question_visual_id": "2", "question_text": "The song _Is That All There Is_ was originally released in…", "answer_ids": [ "131" ], "answers": [ { "id": "131", "numerator": "a", "accesskey": "a", "text": "1967" }, { "id": "132", "numerator": "b", "accesskey": "b", "text": "1970" }, { "id": "133", "numerator": "c", "accesskey": "c", "text": "1901" }, { "id": "134", "numerator": "d", "accesskey": "d", "text": "Multiple times", "correction": "Wait, how could you pick that!? Did you read the question? *Originally* means only once silly." } ], "messages": { "correct": "Correct. While made famous by Peggy Lee in 1969, it was originally performed by Georgia Brown in May 1967 for a television special.", "incorrect": "Incorrect. While made famous by Peggy Lee in 1969, it was originally performed by Georgia Brown in May 1967 for a television special." } }, { "id": "14", "question_visual_id": "3", "question_text": "The song was made popular by Peggy Lee in 1969. What song was a hit for her before this one?", "answer_ids": [ "143" ], "answers": [ { "id": "141", "numerator": "a", "accesskey": "a", "text": "_The Devil Went Down to Georgia_" }, { "id": "142", "numerator": "b", "accesskey": "b", "text": "_Georgia On My Mind_", "correction": "No, that was [Georgia Brown](https://en.wikipedia.org/wiki/Georgia_Brown_(English_singer))" }, { "id": "143", "numerator": "c", "accesskey": "c", "text": "_Fever_" }, { "id": "144", "numerator": "d", "accesskey": "d", "text": "_A Mild Winter Cough_" } ], "messages": { "correct": "Correct. _Fever_ was her previous hit.", "incorrect": "Incorrect. _Fever_ was her previous hit." } }, { "id": "15", "question_visual_id": "4", "question_text": "Multiple people have covered the song. Which of these artists did *not* sing it?", "answer_ids": [ "153" ], "answers": [ { "id": "151", "numerator": "a", "accesskey": "a", "text": "Chaka Khan", "correction": "She covered it: [Chaka Khan](https://en.wikipedia.org/wiki/Chaka_Khan)" }, { "id": "152", "numerator": "b", "accesskey": "b", "text": "P.J. Harvey", "correction": "She covered it: [P.J. Harvey](https://en.wikipedia.org/wiki/P.J._Harvey)" }, { "id": "153", "numerator": "c", "accesskey": "c", "text": "Prince", "correction": "No, but he did record _Let\x27s go crazy_ which is arguably better." }, { "id": "154", "numerator": "d", "accesskey": "d", "text": "Homer Simpson", "correction": "In the _Children of a Lesser Clod_ episode of the Simpsons, Homer sings a verse of the chorus when asked by Rod Flanders to &quot;...sing that crazy song we love&quot;." }, { "id": "155", "numerator": "e", "accesskey": "e", "text": "Hildegard Knef", "correction": "Released a German version called _Wenn das alles ist_. [Hildegard Knef](https://en.wikipedia.org/wiki/Hildegard_Knef)" } ], "messages": { "correct": "Correct. Prince never covered it (although there\x27s a whole vault of content that\x27s never been released...)", "incorrect": "Incorrect. Prince was the one who never covered it." } }, { "id": "16", "question_visual_id": "5", "question_text": "Could you sing _Fever_ better than Rufferella?", "answer_ids": [ "162" ], "answers": [ { "id": "161", "numerator": "y", "accesskey": "y", "text": "Yes" }, { "id": "162", "numerator": "n", "accesskey": "n", "text": "No" } ], "messages": { "correct": "Correct. Correct, she sang for the queen, did you? [Rufferella](https://amzn.com/0747550387?)", "incorrect": "Incorrect, she sang for the queen. Did you? No, I didn\x27t think so. [Rufferella](https://amzn.com/0747550387?)" } }, { "id": "17", "question_visual_id": "6", "question_text": "The lyrics talk of being disappointed with various experiences in her life. What experience did *not* happen to the protaganist?", "answer_ids": [ "174" ], "answers": [ { "id": "171", "numerator": "a", "accesskey": "a", "text": "Her family\x27s house caught on fire" }, { "id": "172", "numerator": "b", "accesskey": "b", "text": "She saw the circus" }, { "id": "173", "numerator": "c", "accesskey": "c", "text": "Falling in love" }, { "id": "174", "numerator": "d", "accesskey": "d", "text": "Her dog died" } ], "messages": { "correct": "Correct. Her dog was not mentioned.", "incorrect": "Incorrect. Nothing happened to her dog." } }, { "id": "18", "question_visual_id": "5", "question_text": "Is that all there is?", "answer_ids": [ "182", "183" ], "answers": [ { "id": "181", "numerator": "y", "accesskey": "y", "text": "Yes" }, { "id": "182", "numerator": "n", "accesskey": "n", "text": "No" } ], "messages": { "correct": "Trick question. Both answers are correct. So let\x27s &quot;break out the booze and have a ball — if that\x27s all there is.&quot;", "incorrect": "Trick question. Both answers are correct. So let\x27s &quot;break out the booze and have a ball — if that\x27s all there is.&quot;" } } ] }'
@@ -281,9 +350,10 @@ var quiz_controller;
 $(document).ready(function() {
 	$("#quiz1link").click(function(event) {
 		event.preventDefault();
-	  	loadQuestion1();
+	  	loadQuestion1(); 
 	})
 	loadQuestion1();
+	quiz_controller.run();
 });
 
 function loadQuestion1() {
@@ -291,16 +361,12 @@ function loadQuestion1() {
 	if (quiz_controller) {
 		hide_introduction();
 	}
-	quiz_controller.run();
 }
 
 function hide_introduction() {
 	var intro = $("#introduction");
-	var quiz = $("#quiz");
 	intro.attr('hidden');
 	intro.addClass('hidden');
-	quiz.removeAttr('hidden');
-	quiz.removeClass('hidden');
 }
 
 function loadQuestion(qdata) {
@@ -310,19 +376,4 @@ function loadQuestion(qdata) {
 	return qc;
 }
 
-/* These are a hack because I couldn't figure out how to get back to my controller */
-function answer_set_changed() {
-	quiz_controller.refresh_button_state();
-}
 
-function check_answer(event) {
-	event.preventDefault();
-	console.log("check answer");
-	quiz_controller.verify_answer();
-	console.log("end check answer");
-	return false;
-}
-
-function next_question(event) {
-	quiz_controller.continue_quiz();
-}
