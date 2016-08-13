@@ -22,10 +22,10 @@
 		</h2>
 		<div class="intro-text">
 			<p>
-				We are committed to bringing about an expansion in human knowledge through effective quizmaking. Using a patent-considered (and rejected) A.e.I. (alcohol enhanced intelligence), we can create an interesting and mindful quiz from any (most...some) Wikipedia article. We are currently focused on longer articles where are system has a better chance of parsing the human language and intents to expose the underlying questions present in every article. 
+				We are committed to bringing about an expansion in human knowledge through effective quizmaking. Using a <span class="tooltip">patent-considered <span class="tooltiptext">and rejected</span></span> <span class="tooltip">A.e.I. <span class="tooltiptext">alcohol enhanced intelligence</span></span>, we can create an interesting and mindful quiz from <span class="tooltip">any <span class="tooltiptext">most, er…some</span></span> Wikipedia article. We are currently focused on longer articles where are system has a better chance of parsing the human language and intents to expose the underlying questions present in every article. 
 			</p>
 			<p>
-				Based on 40+ years of analog human learning, our system performs these analyses with significantly improved outcomes over traditional machine learning techniques. The underlying actual neural network combines eons of architecture performance improvement (or divine inspiration depending on your world view) with modern visual acuity improvements (glasses). We use modern software engineering practices for quiz presentation and we strive to provide a small amount of joy for the quiz-taker. 
+				Based on 40+ years of analog human learning, our system performs these analyses with significantly improved outcomes over traditional machine learning techniques. The underlying actual neural network combines eons of <span class="tooltip">architecture performance improvement <span class="tooltiptext">or divine inspiration depending on your world view</span></span> with modern <span class="tooltip">visual acuity improvements <span class="tooltiptext">glasses</span></span>. We use modern software engineering practices for quiz presentation and we strive to provide a small amount of joy for the quiz-taker. 
 			</p>
 		</div>
 		<div class="quiz-list">
@@ -37,28 +37,33 @@
 	<form action="" method="GET" name="quiz" id="quiz" class="hidden" hidden>
 		<div class="question-area">
 			<div class="question">
-				<span class="question-number">0</span> <span class="question-text">Quiz question </span> 
+				<span class="question-number" aria-live="polite" aria-atomic="true" aria-relevant="text">0</span> <span class="question-text" aria-live="polite" aria-atomic="true" aria-relevant="text">Quiz question </span> 
 			</div>
-			<fieldset id="answer-list">
+			<fieldset id="answer-list"  aria-live="polite" aria-relevant="additions removals">
 				<legend>Possible answers</legend>
 			</fieldset>
 		</div>
 		<div id="button-area">
-			<button name="Am I right?" type="submit" value="checkme" id="formbutton" class="check-button button-style" aria-live="assertive" aria-atomic="true" aria-relevant="text" disabled> Am I right? </button> 
+			<button name="Am I right?" type="submit" value="checkme" id="formbutton" class="check-button button-style" disabled> Am I right? </button> 
 		</div>
 		<div id="correction-area">
-			<div id="correction-text" aria-live="assertive" aria-atomic="true" aria-relevant="additions removals text">
+			<div id="correction-text" role="alert" aria-live="assertive" aria-relevant="all">
 			</div>
 		</div>
 	</form>
 	<div id="completed-quiz" class="hidden" hidden>
-			<div id="completed-quiz-title">
+		<div id="completed-quiz-title">
 				Quiz complete
 			</div>
-		</h2>
 		<div id="completed-quiz-text">
 			
 		</div>
+		<div id="button-area">
+			<form action="" method="GET" name="retryform" id="retryform">
+			<button name="Try again" type="submit" value="retry" id="retrybutton" class="check-button button-style"> Retry </button> 
+			</form>
+		</div>
+
 	</div>
 </div>
 
@@ -69,7 +74,7 @@
 </div>
 
 <footer class="quizzful-footer">
-	Copyright &copy; 2016 Mark Williams 
+	Copyright &copy; 2016 Mark Williams | Color scheme and ideas from <a href="http://www.csszengarden.com/221/">CSS Zen Garden</a><br />The Wikimedia Foundation, the owners of Wikipedia has not endorsed or supported or acknowledged or probably even made aware of Quizful.
 </footer>
 <script src="js/jquery-2.2.4.js">
 </script>

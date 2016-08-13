@@ -19,6 +19,10 @@ header {
 	margin-left: 20px;
 }
 
+footer {
+	font-family: 'EB Garamond', serif;
+	font-size: 15px;
+}
 #header-text {
 	font-family: 'EB Garamond', serif;
 	font-size:35px;
@@ -36,6 +40,7 @@ header {
 
 .question {
 	margin-bottom: 30px;
+	line-height: 2em;
 }
 	
 .question-number, .question-text  {
@@ -55,6 +60,7 @@ header {
   	background-color: #c879b2;
   	color: white;
   	padding: 0.2em;
+  	margin-bottom: 50px;
 }
 
 .question-text {
@@ -97,7 +103,8 @@ header {
 }
 
 #formbutton {
-	float: right;
+	float: left;
+	margin-left: 20px;
 }
 
 #answer-list {
@@ -352,4 +359,36 @@ footer {
   border-radius: 2px;
   -webkit-transform-origin: 0 0;
   -moz-transform-origin: 0 0;
+}
+
+/* tooltips */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: #0d2c40;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+    font-size: 0.75em;
+    
+    /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+    opacity: 0;
+    transition: opacity 500ms;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
 }
