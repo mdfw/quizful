@@ -1,12 +1,10 @@
 // Original JavaScript code by Chirp Internet: www.chirp.com.au
 // Please acknowledge use of this code by including this header.
 function start_fireworks() {
-	console.log("starting fireworks");
 	fireworks();
 }
 
 function end_fireworks () {
-	console.log("ending fireworks");
 	$(".launcher").remove();
 }
 
