@@ -135,6 +135,11 @@ var QuizController = function(options) {
 		this.refreshUI();
 	}	
 	
+	this.end = funtion() {
+		$("#quiz").attr('hidden').addClass('hidden');
+		show_introduction();
+	}
+	
 	this.refreshUI = function() {
 		if (this.qmod.quiz_complete()) {
 			this.show_final_score();
