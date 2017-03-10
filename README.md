@@ -1,10 +1,6 @@
 # Quizful
 
-Quiz program developed as part of Thinkful curriculum.
-
-## Purpose
-
-Build a quiz program using jquery. 
+Quiz program built as practice with jQuery and design. Tries to inject some humor in a dry project (see mouseovers).
 
 ## Example
 
@@ -24,3 +20,8 @@ https://mdfw.github.io/quizful
 #### Libraries
 
 * jQuery
+
+### Screenshot
+
+![search](https://github.com/mdfw/quizful/blob/master/readme/quizful_screenshot.png "Quizful screen shot")
+
